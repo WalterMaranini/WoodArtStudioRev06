@@ -5,6 +5,8 @@ from io import BytesIO
 from flask import Flask, render_template, request, jsonify
 import threading
 import time
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -15,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 template_path = os.path.join(BASE_DIR, 'templates')
 base_directory = "static/Immagini"
 github_repo_url = "https://api.github.com/repos/waltermaranini/WoodArtStudioImmagini/contents/images/"
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 headers = {
     "Authorization": f"token {GITHUB_TOKEN}"
 }
