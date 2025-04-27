@@ -7,6 +7,14 @@ import threading
 import time
 from dotenv import load_dotenv
 load_dotenv()
+import logging
+
+# Configura il logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
 
 # -----------------------------------------------------
 # PARAMETRI DI CONFIGURAZIONE
@@ -19,7 +27,6 @@ GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 headers = {
     "Authorization": f"token {GITHUB_TOKEN}"
 }
-
 
 # Crea l'app Flask
 app = Flask(__name__, template_folder=template_path)
@@ -72,6 +79,7 @@ def download_and_resize_image_from_bytes(content, save_path, scale=0.3):
 
 def sync_with_github():
     while True:
+        logging.info("Avvio sincronizzazione con GitHub...")
         response = requests.get(github_repo_url, headers=headers)
         if response.status_code == 200:
             contents = response.json()
@@ -79,6 +87,7 @@ def sync_with_github():
                 if item['type'] == 'dir':
                     category_name = item['name']
                     create_category_directories(category_name)
+                    logging.info(f"Controllo categoria: {category_name}")
                     category_url = f"{github_repo_url}{category_name}"
                     category_response = requests.get(category_url, headers=headers)
                     if category_response.status_code == 200:
@@ -90,15 +99,21 @@ def sync_with_github():
                         }
                         local_original_path = os.path.join(base_directory, category_name, "Originali")
                         local_reduced_path = os.path.join(base_directory, category_name, "Ridotte")
-                        local_files = set(os.listdir(local_original_path)) if os.path.exists(local_original_path) else set()
+                        local_files = set(os.listdir(local_original_path)) if os.path.exists(
+                            local_original_path) else set()
+
+                        # Elimina file locali non più presenti su GitHub
                         files_to_delete = local_files - github_files
                         for file_to_delete in files_to_delete:
+                            logging.info(f"Elimino file obsoleto: {file_to_delete}")
                             original_file_path = os.path.join(local_original_path, file_to_delete)
                             reduced_file_path = os.path.join(local_reduced_path, file_to_delete)
                             if os.path.exists(original_file_path):
                                 os.remove(original_file_path)
                             if os.path.exists(reduced_file_path):
                                 os.remove(reduced_file_path)
+
+                        # Scarica file mancanti
                         missing_files = github_files - local_files
                         for file_item in category_contents:
                             if file_item['type'] == 'file':
@@ -108,20 +123,22 @@ def sync_with_github():
                                     continue
                                 local_original_file_path = os.path.join(local_original_path, file_name)
                                 local_reduced_file_path = os.path.join(local_reduced_path, file_name)
-                                response = requests.get(file_url, headers=headers)
-                                if response.status_code == 200:
-                                    content = response.content
-                                    if not os.path.exists(local_original_file_path):
+                                if not os.path.exists(local_original_file_path):
+                                    response = requests.get(file_url, headers=headers)
+                                    if response.status_code == 200:
+                                        content = response.content
                                         with open(local_original_file_path, 'wb') as f:
                                             f.write(content)
-                                    if not os.path.exists(local_reduced_file_path):
+                                        logging.info(f"Scaricato file originale: {file_name}")
                                         download_and_resize_image_from_bytes(content, local_reduced_file_path)
+                                        logging.info(f"Creata immagine ridotta: {file_name}")
+                                    else:
+                                        logging.error(f"Errore download {file_name}: {response.status_code}")
+        else:
+            logging.error(f"Errore accesso GitHub: {response.status_code}")
+
+        logging.info("Fine sincronizzazione. Pausa di 60 secondi.\n")
         time.sleep(60)
-
-# Avvia il thread in background
-#sync_thread = threading.Thread(target=sync_with_github, daemon=True)
-#sync_thread.start()
-
 
 @app.route('/')
 def HomePage():
@@ -214,4 +231,4 @@ if __name__ == '__main__':
     print("Cartella template usata da Flask:", app.template_folder)
     sync_thread = threading.Thread(target=sync_with_github, daemon=True)
     sync_thread.start()
-    app.run(debug=True)
+#    app.run(debug=True) Questo richiamo va omesso per essere eseguito su PythonAnyWhere
