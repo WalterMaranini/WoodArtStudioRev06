@@ -2,29 +2,28 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>WoodArtStudio - Orecchini in Legno e Pietre preziose</title>
+  <title>WoodArtStudio - Gioielli in Legno e Pietre Naturali</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Reset di base */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* Font base */
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f9f9f9;
-      color: #444;
+      color: #333;
       line-height: 1.6;
     }
 
-    /* Navbar minimal */
+    /* Navbar */
     nav {
-      background-color: #fff;
+      background-color: #ffffff;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -32,13 +31,13 @@
       border-bottom: 1px solid #eee;
       position: sticky;
       top: 0;
-      z-index: 999;
+      z-index: 1000;
     }
 
-    nav .logo {
+    .logo {
       font-weight: 700;
-      font-size: 1.2rem;
-      color: #333;
+      font-size: 1.5rem;
+      color: #5d4037;
       text-decoration: none;
     }
 
@@ -49,151 +48,98 @@
     }
 
     nav ul li a {
-      color: #444;
+      color: #555;
       text-decoration: none;
       font-weight: 500;
-      transition: color 0.3s ease;
+      transition: color 0.3s;
     }
 
     nav ul li a:hover {
       color: #ff6f00;
     }
 
-    /* Hero (banner) con gradiente e overlay immagine */
+    /* Hero Section */
     .hero {
-      min-height: 70vh;
-      background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)),
-                  url('https://via.placeholder.com/1200x700/8d6e63/ffffff?text=WoodArtStudio:+orecchini+in+legno+e+pietre')
-                  center/cover no-repeat;
+      min-height: 85vh;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                  url('{{ url_for('static', filename='sfondi/Sfondo_01.jpeg') }}') center/cover no-repeat;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
+      color: #fff;
       padding: 2rem;
     }
 
     .hero h1 {
       font-size: 3rem;
-      font-weight: 700;
       margin-bottom: 1rem;
-      color: #333;
     }
 
     .hero p {
       font-size: 1.2rem;
-      color: #555;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       max-width: 600px;
-      line-height: 1.4;
     }
 
     .hero a {
-      background-color: #ffb300;
-      color: #333;
-      text-decoration: none;
-      padding: 0.8rem 1.5rem;
+      background-color: #ff6f00;
+      padding: 1rem 2rem;
+      color: #fff;
       font-weight: 600;
+      text-decoration: none;
       border-radius: 5px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
     }
 
     .hero a:hover {
-      background-color: #ffa000;
+      background-color: #e65100;
     }
 
-    /* Sezione "Chi siamo" */
+    /* About Section */
     .about {
-      max-width: 1100px;
-      margin: 3rem auto;
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 2rem;
-      padding: 0 1rem;
     }
 
-    .about-text {
-      flex: 1 1 400px;
+    .about-text, .about-image {
+      flex: 1 1 500px;
     }
 
     .about-text h2 {
-      font-size: 2rem;
-      color: #333;
+      font-size: 2.5rem;
       margin-bottom: 1rem;
-      font-weight: 700;
+      color: #5d4037;
     }
 
     .about-text p {
       margin-bottom: 1rem;
-      font-weight: 300;
       text-align: justify;
     }
 
-    .about-image {
-      flex: 1 1 400px;
-      display: flex;
-      justify-content: center;
-    }
-
     .about-image img {
-      max-width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    /* Sezione video */
-    .video-section {
-      background-color: #fff;
-      padding: 3rem 1rem;
-    }
-
-    .video-section h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #333;
-      font-weight: 700;
-    }
-
-    .video-description {
-      max-width: 800px;
-      margin: 0 auto 2rem auto;
-      text-align: center;
-      color: #666;
-      font-size: 1rem;
-      font-weight: 300;
-      line-height: 1.4;
-    }
-
-    .video-container {
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-      overflow: hidden;
-      padding-top: 56.25%; /* ratio 16:9 */
-    }
-
-    .video-container iframe,
-    .video-container video {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: 0;
-    }
-
-    /* Sezione "Prodotti in evidenza" */
+    /* Products Section */
     .featured {
-      background-color: #fefefe;
-      padding: 3rem 1rem;
+      background-color: #fff8f0;
+      padding: 4rem 2rem;
     }
 
     .featured h2 {
       text-align: center;
-      font-size: 2rem;
-      color: #333;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: #5d4037;
     }
 
     .product-grid {
@@ -201,56 +147,52 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1.5rem;
-      padding: 0 1rem;
+      gap: 2rem;
     }
 
     .product-card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      background-color: #ffffff;
+      border-radius: 10px;
       overflow: hidden;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
     }
 
     .product-card img {
       width: 100%;
-      height: auto;
+      height: 250px;
       object-fit: cover;
     }
 
     .product-card h3 {
-      margin: 1rem 0 0.5rem 0;
-      font-size: 1.1rem;
+      margin: 1rem;
+      font-size: 1.2rem;
       color: #5d4037;
-      font-weight: 600;
     }
 
     .product-card p {
-      flex: 1;
-      padding: 0 1rem;
-      font-size: 0.9rem;
+      margin: 0 1rem 1rem 1rem;
       color: #666;
-      font-weight: 300;
+      font-size: 0.95rem;
+      text-align: center;
     }
 
     .product-card a {
+      display: block;
       background-color: #ffb300;
+      margin: 1rem auto 1.5rem auto;
+      width: fit-content;
+      padding: 0.7rem 1.5rem;
       color: #333;
-      text-decoration: none;
-      padding: 0.6rem 1.2rem;
+      font-weight: 600;
       border-radius: 5px;
-      font-weight: 500;
-      margin: 1rem auto;
-      transition: background-color 0.3s ease;
+      text-decoration: none;
+      transition: background-color 0.3s;
     }
 
     .product-card a:hover {
@@ -259,14 +201,16 @@
 
     /* Footer */
     footer {
-      background-color: #fff;
-      border-top: 1px solid #eee;
-      color: #666;
+      background-color: #ffffff;
       text-align: center;
-      padding: 1.5rem 0;
-      margin-top: 3rem;
+      padding: 2rem;
+      border-top: 1px solid #eee;
+      margin-top: 4rem;
       font-size: 0.9rem;
-      font-weight: 300;
+    }
+
+    footer p {
+      margin-bottom: 0.5rem;
     }
 
     footer a {
@@ -278,127 +222,90 @@
       text-decoration: underline;
     }
 
-    /* Responsive design */
+    /* Responsive */
     @media (max-width: 768px) {
-      nav ul {
-        display: none; /* Semplice semplificazione su mobile */
-      }
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
       .about {
         flex-direction: column;
-      }
-      .about-text, .about-image {
-        flex: 1 1 100%;
-      }
-      .product-grid {
-        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Navbar -->
-  <nav>
-    <a href="#" class="logo">WoodArtStudio</a>
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/Galleria">Prodotti</a></li>
-      <li><a href="/Ricerca">Ricerca</a></li>
+<!-- Navbar -->
+<nav>
+  <a href="/" class="logo">WoodArtStudio</a>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/Galleria">Prodotti</a></li>
+    <li><a href="/Ricerca">Ricerca</a></li>
+
+    {% if current_user.is_authenticated %}
       <li><a href="/Configurazione">Configurazione</a></li>
-      <li><a href="#">Chi Siamo</a></li>
-      <li><a href="#">Contatti</a></li>
-    </ul>
-  </nav>
+      <li><a href="/logout">Logout</a></li>
+    {% else %}
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Registrati</a></li>
+    {% endif %}
 
-  <!-- Sezione Hero -->
-  <div class="hero">
-    <h1>Orecchini Fatti a Mano</h1>
-    <p>Legno pregiato e pietre naturali per gioielli dal fascino unico</p>
-    <a href="/Galleria">Scopri la Collezione</a>
+    <li><a href="#">Chi Siamo</a></li>
+    <li><a href="#">Contatti</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <h1>Gioielli Unici in Legno e Pietre</h1>
+  <p>Scopri la nuova collezione di orecchini artigianali, ispirati alla natura.</p>
+  <a href="/Galleria">Esplora la Collezione</a>
+</section>
+
+<!-- About Section -->
+<section class="about">
+  <div class="about-text">
+    <h2>La Nostra Storia</h2>
+    <p>WoodArtStudio nasce dalla passione per l’artigianato naturale. Uniamo l'eleganza delle pietre preziose alla bellezza dei legni più pregiati per creare gioielli che raccontano storie uniche.</p>
+    <p>Ogni pezzo è fatto a mano, nel rispetto della natura e delle tradizioni artigiane.</p>
   </div>
+  <div class="about-image">
+    <img src="{{ url_for('static', filename='sfondi/Sfondo_01.jpeg') }}" alt="Laboratorio Artigianale">
+  </div>
+</section>
 
-  <!-- Sezione "Chi siamo" -->
-  <section class="about">
-    <div class="about-text">
-      <h2>La nostra storia</h2>
-      <p>
-        Benvenuti in WoodArtStudio! Siamo un laboratorio artigianale che combina la maestria del legno
-        con la bellezza delle pietre naturali. Ogni orecchino è un pezzo irripetibile, realizzato con passione
-        e attenzione al minimo dettaglio.
-      </p>
-      <p>
-        Il nostro obiettivo è dar vita a gioielli che rispecchino l’autenticità della natura e lo stile
-        di chi li indossa, con materiali selezionati nel pieno rispetto dell’ambiente.
-      </p>
+<!-- Featured Products -->
+<section class="featured">
+  <h2>Prodotti in Evidenza</h2>
+  <div class="product-grid">
+    <!-- Esempio di prodotto -->
+    <div class="product-card">
+      <img src="https://via.placeholder.com/400x400/c8e6c9/000000?text=Orecchini+Ciliegio+%26+Quarzo" alt="Orecchini 1">
+      <h3>Ciliegio & Quarzo Rosa</h3>
+      <p>Eleganza naturale per uno stile autentico.</p>
+      <a href="#">Scopri</a>
     </div>
-    <div class="about-image">
-      <img src="static/sfondi/Sfondo_01.jpeg" alt="Laboratorio Artigianale">
-    </div>
-  </section>
 
-  <!-- Sezione Video: lavorazione artigianale -->
-  <section class="video-section">
-    <h2>Lavorazione Artigianale</h2>
-    <p class="video-description">
-      Dai un’occhiata al nostro processo creativo! Dalla scelta del legno alla selezione delle pietre,
-      ogni fase è curata con la massima dedizione.
-    </p>
-    <div class="video-container">
-      <!-- Esempio di embed YouTube, sostituisci con il tuo link -->
-      <iframe
-        src="https://www.youtube.com/embed/XXXXXXXXXXX"
-        title="Video di lavorazione artigianale degli orecchini"
-        allowfullscreen
-      ></iframe>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/400x400/d7ccc8/000000?text=Orecchini+Noce+%26+Ametista" alt="Orecchini 2">
+      <h3>Noce & Ametista</h3>
+      <p>Profondità e fascino nella semplicità.</p>
+      <a href="#">Scopri</a>
     </div>
-  </section>
 
-  <!-- Sezione "Prodotti in evidenza" -->
-  <section class="featured">
-    <h2>Prodotti in Evidenza</h2>
-    <div class="product-grid">
-      <!-- Prodotto #1 -->
-      <div class="product-card">
-        <img src="https://via.placeholder.com/400x400/c8e6c9/000000?text=Orecchini+in+Ciliegio+%26+Quarzo" alt="Orecchini 1">
-        <h3>Ciliegio & Quarzo Rosa</h3>
-        <p>Eleganza naturale: intreccio di legno di ciliegio e quarzo rosa.</p>
-        <a href="#">Dettagli</a>
-      </div>
-      <!-- Prodotto #2 -->
-      <div class="product-card">
-        <img src="https://via.placeholder.com/400x400/d7ccc8/000000?text=Orecchini+in+Noce+%26+Ametista" alt="Orecchini 2">
-        <h3>Noce & Ametista</h3>
-        <p>Finitura lucida e pietra ametista per un tocco di fascino viola.</p>
-        <a href="#">Dettagli</a>
-      </div>
-      <!-- Prodotto #3 -->
-      <div class="product-card">
-        <img src="https://via.placeholder.com/400x400/ffe0b2/000000?text=Orecchini+in+Betulla+%26+Turchese" alt="Orecchini 3">
-        <h3>Betulla & Turchese</h3>
-        <p>Un contrasto fresco tra legno chiaro e pietra turchese.</p>
-        <a href="#">Dettagli</a>
-      </div>
-      <!-- Prodotto #4 -->
-      <div class="product-card">
-        <img src="https://via.placeholder.com/400x400/ffccbc/000000?text=Orecchini+in+Rovere+%26+Occhio+di+Tigre" alt="Orecchini 4">
-        <h3>Rovere & Occhio di Tigre</h3>
-        <p>Forme geometriche moderne e calde venature di rovere.</p>
-        <a href="#">Dettagli</a>
-      </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/400x400/ffe0b2/000000?text=Orecchini+Betulla+%26+Turchese" alt="Orecchini 3">
+      <h3>Betulla & Turchese</h3>
+      <p>Leggerezza e colore per ogni occasione.</p>
+      <a href="#">Scopri</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 WoodArtStudio - Tutti i diritti riservati</p>
-    <p><a href="#">Termini e Condizioni</a></p>
-  </footer>
+<!-- Footer -->
+<footer>
+  <p>© 2025 WoodArtStudio - Tutti i diritti riservati</p>
+  <p><a href="#">Termini e Condizioni</a> | <a href="#">Privacy</a></p>
+</footer>
 
 </body>
 </html>

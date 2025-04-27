@@ -8,13 +8,19 @@ import time
 from dotenv import load_dotenv
 load_dotenv()
 import logging
+from flask import redirect, url_for
+from werkzeug.utils import secure_filename
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+import json
+
+
 
 # Configura il logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
-
 
 # -----------------------------------------------------
 # PARAMETRI DI CONFIGURAZIONE
@@ -31,9 +37,84 @@ headers = {
 # Crea l'app Flask
 app = Flask(__name__, template_folder=template_path)
 
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'secret_key_da_cambiare')
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+# Percorso file utenti
+utenti_file = os.path.join(BASE_DIR, 'utenti.json')
+
+# Carica utenti da file
+def carica_utenti():
+    if os.path.exists(utenti_file):
+        with open(utenti_file, 'r') as f:
+            return json.load(f)
+    else:
+        return {}
+
+# Salva utenti su file
+def salva_utenti(utenti):
+    with open(utenti_file, 'w') as f:
+        json.dump(utenti, f)
+
+# Inizializza
+utenti = carica_utenti()
+
+class User(UserMixin):
+    def __init__(self, id_, username, password_hash):
+        self.id = id_
+        self.username = username
+        self.password_hash = password_hash
+
+    def get_id(self):
+        return str(self.id)
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = utenti.get(user_id)
+    if user:
+        return User(user_id, user['username'], user['password_hash'])
+    return None
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if any(u['username'] == username for u in utenti.values()):
+            return "Username già esistente."
+        user_id = str(len(utenti) + 1)
+        password_hash = generate_password_hash(password)
+        utenti[user_id] = {'username': username, 'password_hash': password_hash}
+        salva_utenti(utenti)
+        return redirect(url_for('login'))
+    return render_template('register.html')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        for id_, user in utenti.items():
+            if user['username'] == username and check_password_hash(user['password_hash'], password):
+                user_obj = User(id_, username, user['password_hash'])
+                login_user(user_obj)
+                return redirect(url_for('HomePage'))
+        return "Login fallito. Username o password errati."
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('HomePage'))
+
+
 # Crea la cartella base se non esiste
 if not os.path.exists(base_directory):
     os.makedirs(base_directory)
+
+
+
 
 def create_category_directories(category_name):
     category_path = os.path.join(base_directory, category_name)
@@ -193,6 +274,7 @@ def ricerca():
     return jsonify(risultati)
 
 @app.route('/Configurazione')
+@login_required
 def pagina_configurazione():
     immagini = []
     for category_name in sorted(os.listdir(base_directory)):
@@ -205,8 +287,6 @@ def pagina_configurazione():
                     "path": f"/static/Immagini/{category_name}/Originali/{nome_file}"
                 })
     return render_template('Configurazione.html', immagini=immagini)
-
-
 def estrai_attributi_immagine(percorso_file):
     try:
         image = Image.open(percorso_file)
@@ -222,6 +302,40 @@ def estrai_attributi_immagine(percorso_file):
         return None
 
 
+@app.route('/upload_immagine', methods=['POST'])
+def upload_immagine():
+    categoria = request.form['categoria']
+    immagine = request.files['immagine']
+
+    if immagine and categoria:
+        category_path = os.path.join(base_directory, categoria, "Originali")
+        if not os.path.exists(category_path):
+            create_category_directories(categoria)
+
+        filename = secure_filename(immagine.filename)
+        save_path = os.path.join(category_path, filename)
+        immagine.save(save_path)
+        logging.info(f"Immagine caricata: {filename} nella categoria {categoria}")
+
+    return redirect(url_for('pagina_configurazione'))
+
+
+@app.route('/elimina_immagine', methods=['POST'])
+def elimina_immagine():
+    categoria = request.form['categoria']
+    filename = request.form['filename']
+    original_path = os.path.join(base_directory, categoria, "Originali", filename)
+    reduced_path = os.path.join(base_directory, categoria, "Ridotte", filename)
+
+    if os.path.exists(original_path):
+        os.remove(original_path)
+        logging.info(f"Immagine originale eliminata: {filename}")
+    if os.path.exists(reduced_path):
+        os.remove(reduced_path)
+        logging.info(f"Immagine ridotta eliminata: {filename}")
+
+    return redirect(url_for('pagina_configurazione'))
+
 
 if __name__ == '__main__':
     print(os.path.exists("templates/HomePage.html"))
@@ -231,4 +345,4 @@ if __name__ == '__main__':
     print("Cartella template usata da Flask:", app.template_folder)
     sync_thread = threading.Thread(target=sync_with_github, daemon=True)
     sync_thread.start()
-#    app.run(debug=True) Questo richiamo va omesso per essere eseguito su PythonAnyWhere
+    #app.run(debug=True) # Questo richiamo va omesso per essere eseguito su PythonAnyWhere
