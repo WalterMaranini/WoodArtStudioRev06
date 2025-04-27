@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Ricerca Immagini</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      color: #444;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .form-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-container input {
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      min-width: 200px;
+    }
+
+    .form-container button {
+      background-color: #ffb300;
+      border: none;
+      color: #333;
+      font-weight: 600;
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-container button:hover {
+      background-color: #ffa000;
+    }
+
+    #risultati {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .img-container {
+      background-color: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .img-container img {
+      width: 100px;
+      height: auto;
+      border-radius: 6px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .img-container:hover img {
+      transform: scale(2.5);
+      z-index: 10;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .img-container strong {
+      display: block;
+      margin-top: 0.3rem;
+      color: #5d4037;
+    }
+
+    /* Modal per immagine */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Ricerca Immagini per Colore e Dimensione</h1>
+
+  <div class="form-container">
+    <input type="text" id="colore" placeholder="es. blu, rosso">
+    <input type="text" id="dimensione" placeholder="es. 640x480">
+    <button onclick="cercaImmagini()">Cerca</button>
+  </div>
+
+  <div id="risultati"></div>
+
+  <!-- Modal per immagine ingrandita -->
+  <div id="popupModal" class="modal">
+    <span class="close" onclick="chiudiPopup()">&times;</span>
+    <img class="modal-content" id="popupImg">
+  </div>
+
+  <script>
+    function cercaImmagini() {
+      const colore = document.getElementById("colore").value;
+      const dimensione = document.getElementById("dimensione").value;
+
+      fetch(`/api/ricerca_immagini?colore=${encodeURIComponent(colore)}&dimensione=${encodeURIComponent(dimensione)}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("risultati");
+          container.innerHTML = "";
+
+          if (data.length === 0) {
+            container.innerHTML = "<p style='text-align:center;'>Nessuna immagine trovata.</p>";
+            return;
+          }
+          data.forEach(img => {
+            const div = document.createElement("div");
+            div.className = "img-container";
+
+            const image = document.createElement("img");
+            image.src = img.thumbnail;
+            image.alt = img.filename;
+
+            // Calcolo l’URL dell’immagine originale
+            const fullUrl = img.thumbnail.replace("Ridotte", "Originali");
+
+            // Event listener corretto per doppio click
+            image.ondblclick = function () {
+              console.log("Apro immagine:", fullUrl);
+              mostraPopup(fullUrl);
+            };
+
+            // Creo gli altri elementi
+            const coloreEl = document.createElement("strong");
+            coloreEl.textContent = `Colore: ${img.colore}`;
+
+            const dimEl = document.createElement("strong");
+            dimEl.textContent = `Dimensione: ${img.dimensione}`;
+
+            // Aggiungo tutto nel contenitore
+            div.appendChild(image);
+            div.appendChild(coloreEl);
+            div.appendChild(dimEl);
+
+            // Aggiungo al DOM
+            container.appendChild(div);
+          });
+
+
+        });
+    }
+
+    function mostraPopup(url) {
+      const modal = document.getElementById("popupModal");
+      const modalImg = document.getElementById("popupImg");
+      modal.style.display = "block";
+      modalImg.src = url;
+    }
+
+    function chiudiPopup() {
+      document.getElementById("popupModal").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
