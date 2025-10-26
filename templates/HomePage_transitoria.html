@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: "Lucida Handwriting", "Comic Sans MS", Cursive, sans-serif;
+            font-size: 3em;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-family: "Trebuchet MS", Verdana, sans-serif;
+            font-size: 1.8em;
+            color: #333;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        img {
+            max-width: 800px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .contact {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .contact a {
+            color: #0077b6;
+            text-decoration: none;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 2.2em;
+            }
+
+            .subtitle {
+                font-size: 1.5em;
+            }
+
+            .contact {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">WoodArtStudio</div>
+    <img src="static/foto.png" alt="Foto in costruzione">
+    <div class="subtitle">Sito in costruzione</div>
+    <p class="contact">
+        Mi puoi contattare su Instagram: <a href="https://www.instagram.com/WoodArtStudio.it" target="_blank">@WoodArtStudio.it</a>
+    </p>
+</body>
+</html>
