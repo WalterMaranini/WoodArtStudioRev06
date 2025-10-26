@@ -223,7 +223,7 @@ def sync_with_github():
 
 @app.route('/')
 def HomePage():
-    return render_template('HomePage.html')
+    return render_template('HomePage_transitoria.html')
 
 @app.route('/Galleria')
 def galleria_immagini():
